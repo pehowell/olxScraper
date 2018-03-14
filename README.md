@@ -22,6 +22,6 @@ Docker example:
 
 ```docker run --rm -v /my/home/dir:/data pehowell/olx-scraper -p -a 1000 -b 2000 gameboy```
 
-This searches for gameboys between the price of 1000 and 2000 PHP
-and prints any new items found between runs.  The ```olx.json``` will
-be stored in /my/home/dir/.
+This searches for "gameboy" between the price of 1000 and 2000 PHP
+and prints any new items found between runs.  The ```olx.json``` file
+will be stored in ```/my/home/dir/```.
