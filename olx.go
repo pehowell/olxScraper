@@ -15,7 +15,7 @@ import (
 type Item struct {
 	Name  string `json:"name"`
 	Price int    `json:"price"`
-	Link string `json:"link"`
+	Link  string `json:"link"`
 }
 
 func check(e error) {
@@ -25,16 +25,16 @@ func check(e error) {
 }
 
 func withinRange(amount int, min int, max int) bool {
-  // Check to see if amount is at least the minimum and at most the maximum
-  if amount >= min {
-    if max <= 0 {
-      return true
-    }
-    if amount <= max {
-      return true
-    }
-  }
-  return false
+	// Check to see if amount is at least the minimum and at most the maximum
+	if amount >= min {
+		if max <= 0 {
+			return true
+		}
+		if amount <= max {
+			return true
+		}
+	}
+	return false
 }
 
 func loadItems(filename string) []Item {
@@ -68,28 +68,28 @@ Options:
 
 	args, _ := docopt.ParseDoc(usage)
 
-  // Price range arguments to narrow search
-  above, _ := args.Int("-a")
-  below, _ := args.Int("-b")
-  if above != 0 && below != 0 {
-    // Above (min) price can not be more than below (max) price
-    if above > below {
-      panic("Nonsensical use of above and below price range.")
-    }
-    if above < 0 || below < 0 {
-      panic("Use of negative numbers for above or below is disallowed")
-    }
-  }
-  printNew, _ := args.Bool("--print")
-  pattern, _ := args.String("<pattern>")
-  filename, _ := args.String("<jsonfile>")
+	// Price range arguments to narrow search
+	above, _ := args.Int("-a")
+	below, _ := args.Int("-b")
+	if above != 0 && below != 0 {
+		// Above (min) price can not be more than below (max) price
+		if above > below {
+			panic("Nonsensical use of above and below price range.")
+		}
+		if above < 0 || below < 0 {
+			panic("Use of negative numbers for above or below is disallowed")
+		}
+	}
+	printNew, _ := args.Bool("--print")
+	pattern, _ := args.String("<pattern>")
+	filename, _ := args.String("<jsonfile>")
 
 	olxURL := "https://www.olx.ph"
 
 	var searchURL strings.Builder
 	searchURL.WriteString(olxURL)
 	searchURL.WriteString("/all-results?q=")
-  searchURL.WriteString(pattern)
+	searchURL.WriteString(pattern)
 
 	items := loadItems(filename)
 	var foundItems []Item
@@ -101,19 +101,19 @@ Options:
 	doc := soup.HTMLParse(resp)
 	results := doc.FindAll("div", "itemid", "#product")
 	for _, result := range results {
-    var itemURL strings.Builder
-    link := result.Find("a", "itemprop", "url")
-    itemURL.WriteString(olxURL)
-    itemURL.WriteString(link.Attrs()["href"])
+		var itemURL strings.Builder
+		link := result.Find("a", "itemprop", "url")
+		itemURL.WriteString(olxURL)
+		itemURL.WriteString(link.Attrs()["href"])
 
 		name := result.Find("span", "itemprop", "name")
 
 		priceLine := result.Find("div", "itemprop", "offers").Find("span", "class", "price")
 		price, err := strconv.Atoi(re.FindString(strings.Replace(priceLine.Text(), ",", "", -1)))
 		check(err)
-    if withinRange(price, above, below) {
-      foundItems = append(foundItems, Item{name.Text(), price, itemURL.String()})
-    }
+		if withinRange(price, above, below) {
+			foundItems = append(foundItems, Item{name.Text(), price, itemURL.String()})
+		}
 	}
 	for _, foundItem := range foundItems {
 		known := false
