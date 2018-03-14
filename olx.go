@@ -58,13 +58,13 @@ func main() {
 	usage := `Olx.ph Scraper
 
 Usage:
-  olx [-hp] [-a <min price>] [-b <max price>] [-j <file>] <pattern>
+  olx [-hp] [-a <min price>] [-b <max price>] [-j <path>] <pattern>
 
 Options:
   -a <price>      Price must be above this amount.
   -b <price>      Price must be below this amount.
-  -j <file>       Specify location of json file [default: /data/olx.json] 
   -h, --help      Show this screen.
+  -j <path>       Specify path of json file [default: /data/olx.json] 
   -p, --print     Print new items.`
 
 	args, _ := docopt.ParseDoc(usage)
