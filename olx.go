@@ -24,6 +24,19 @@ func check(e error) {
 	}
 }
 
+func withinRange(amount int, min int, max int) bool {
+  // Check to see if amount is at least the minimum and at most the maximum
+  if amount >= min {
+    if max <= 0 {
+      return true
+    }
+    if amount <= max {
+      return true
+    }
+  }
+  return false
+}
+
 func loadItems(filename string) []Item {
 	var items []Item
 	if _, err := os.Stat(filename); err == nil {
@@ -45,13 +58,28 @@ func main() {
 	usage := `Olx.ph Scraper
 
 Usage:
-  olx [-hp] <pattern> <jsonfile>
+  olx [-hp] [-a <min price>] [-b <max price>] <pattern> <jsonfile>
 
 Options:
-  -h, --help     Show this screen.
-  -p, --print    Print new items.`
+  -a <price>      Price must be above this amount.
+  -b <price>      Price must be below this amount.
+  -h, --help      Show this screen.
+  -p, --print     Print new items.`
 
 	args, _ := docopt.ParseDoc(usage)
+
+  // Price range arguments to narrow search
+  above, _ := args.Int("-a")
+  below, _ := args.Int("-b")
+  if above != 0 && below != 0 {
+    // Above (min) price can not be more than below (max) price
+    if above > below {
+      panic("Nonsensical use of above and below price range.")
+    }
+    if above < 0 || below < 0 {
+      panic("Use of negative numbers for above or below is disallowed")
+    }
+  }
   printNew, _ := args.Bool("--print")
   pattern, _ := args.String("<pattern>")
   filename, _ := args.String("<jsonfile>")
@@ -83,8 +111,9 @@ Options:
 		priceLine := result.Find("div", "itemprop", "offers").Find("span", "class", "price")
 		price, err := strconv.Atoi(re.FindString(strings.Replace(priceLine.Text(), ",", "", -1)))
 		check(err)
-
-		foundItems = append(foundItems, Item{name.Text(), price, itemURL.String()})
+    if withinRange(price, above, below) {
+      foundItems = append(foundItems, Item{name.Text(), price, itemURL.String()})
+    }
 	}
 	for _, foundItem := range foundItems {
 		known := false
