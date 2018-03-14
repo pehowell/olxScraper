@@ -3,6 +3,7 @@ RUN mkdir /build
 ADD *.go /build/ 
 WORKDIR /build 
 RUN go get -d -v github.com/anaskhan96/soup
+RUN go get -d -v github.com/docopt/docopt-go
 RUN CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o main .
 
 FROM pehowell/alpine-dumbinit
