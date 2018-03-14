@@ -100,7 +100,7 @@ Options:
 	saveItems(foundItems, filename)
 	if printNew && len(newItems) > 0 {
 		for _, item := range newItems {
-			fmt.Printf("%v -> %v\n", item.Name, item.Price)
+			fmt.Printf("%v -> %v -> %v\n", item.Price, item.Name, item.Link)
 		}
 	}
 }
