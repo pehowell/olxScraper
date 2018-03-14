@@ -58,11 +58,12 @@ func main() {
 	usage := `Olx.ph Scraper
 
 Usage:
-  olx [-hp] [-a <min price>] [-b <max price>] <pattern> <jsonfile>
+  olx [-hp] [-a <min price>] [-b <max price>] [-j <file>] <pattern>
 
 Options:
   -a <price>      Price must be above this amount.
   -b <price>      Price must be below this amount.
+  -j <file>       Specify location of json file [default: /data/olx.json] 
   -h, --help      Show this screen.
   -p, --print     Print new items.`
 
@@ -82,7 +83,7 @@ Options:
 	}
 	printNew, _ := args.Bool("--print")
 	pattern, _ := args.String("<pattern>")
-	filename, _ := args.String("<jsonfile>")
+	filename, _ := args.String("-j")
 
 	olxURL := "https://www.olx.ph"
 
